@@ -1,0 +1,77 @@
+Tie::Persistent_hash - persistent hash
+
+WHAT IS THIS?
+
+This is Tie::Persistent_hash, a package that allows you to work with 
+a hash and have the values of that hash saved for use each time you
+run the program.  It is very useful when you have a small amount of
+information you want to store, but not enough to put in a database.
+
+HOW DO I INSTALL IT?
+
+To install this module, cd to the directory that contains this README
+file and type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+HOW DOES IT WORK?
+
+  use Tie::Persistent_hash;
+
+  # Tie to a hash and have Persistent_hash decide where to put
+  # the file it will create.
+  tie(%ini, 'Tie::Persistent_hash');
+
+     # Or tell Persistent_hash where to put the file, so you know where
+     # it is.
+     tie(%ini, 'Tie::Persistent_hash', 'my_ini_file');
+
+      $ini{'keep_this'} = "very important info";
+      $ini{'employees'} = ['chris','mathias','jeff','steve'];
+      $ini{'schedule'}  = {'chris' => ['monday','tuesday'],
+                           'jeff'  => ['thursday','friday']};
+
+      # Etc, etc, etc. Next time you tie to that hash,
+      # these values will still exist.
+
+    $ini_file  = $ini{'_ini_file_'}; # Get the path to the inifile.
+    $as_string = $ini{'_raw_data_'}; # Get the hash as it is stored to the file.
+
+
+
+OK SHOW ME HOW IT WORKS!
+
+---Cut Here---
+  tie(%ini, 'Tie::Persistent_hash', "$0.ini");
+
+  print "Please enter some key values pairs ^D when done\n";
+
+    do {
+       ($key,$value) = split(/\s+/);
+
+        if( $key and $value ) {
+           if($ini{$key}) {
+              print "Key: $key was $ini{$key}; now setting $key to $value\n";
+              $ini{$key} = $value;
+            } else {
+               print "Key: $key did not exist, now setting\n";
+               $ini{$key} = $value;
+            }
+         }
+
+     } while(<>);
+
+     # Each run of this example will start with the key values that
+     # were entered durring the last time the program was run.
+
+      
+
+---End---
+
+
+Copyright (c) 1999 Jon Brandon. All rights reserved. This program is 
+free software; you can redistribute it and/or modify it under the same terms
+as Perl itself. 
